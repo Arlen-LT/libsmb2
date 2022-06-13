@@ -309,13 +309,7 @@ decode_dirents(struct smb2_context *smb2, struct smb2dir *dir,
                                                            &tmp_vec);
                 /* steal the name */
                 ent->dirent.name = fs.name;
-                ent->dirent.st.smb2_type = SMB2_TYPE_FILE;
-                if (fs.file_attributes & SMB2_FILE_ATTRIBUTE_DIRECTORY) {
-                        ent->dirent.st.smb2_type = SMB2_TYPE_DIRECTORY;
-                }
-                if (fs.file_attributes & SMB2_FILE_ATTRIBUTE_REPARSE_POINT) {
-                        ent->dirent.st.smb2_type = SMB2_TYPE_LINK;
-                }
+                ent->dirent.st.smb2_type = fs.file_attributes;
                 ent->dirent.st.smb2_nlink = 0;
                 ent->dirent.st.smb2_ino = fs.file_id;
                 ent->dirent.st.smb2_size = fs.end_of_file;
@@ -1764,13 +1758,7 @@ fstat_cb_1(struct smb2_context *smb2, int status,
                 return;
         }
 
-        st->smb2_type = SMB2_TYPE_FILE;
-        if (fs->basic.file_attributes & SMB2_FILE_ATTRIBUTE_DIRECTORY) {
-                st->smb2_type = SMB2_TYPE_DIRECTORY;
-        }
-        if (fs->basic.file_attributes & SMB2_FILE_ATTRIBUTE_REPARSE_POINT) {
-                st->smb2_type = SMB2_TYPE_LINK;
-        }
+        st->smb2_type       = fs->basic.file_attributes;
         st->smb2_nlink      = fs->standard.number_of_links;
         st->smb2_ino        = fs->index_number;
         st->smb2_size       = fs->standard.end_of_file;
@@ -1873,13 +1861,7 @@ getinfo_cb_2(struct smb2_context *smb2, int status,
                 struct smb2_stat_64 *st = stat_data->st;
                 struct smb2_file_all_info *fs = rep->output_buffer;
 
-                st->smb2_type = SMB2_TYPE_FILE;
-                if (fs->basic.file_attributes & SMB2_FILE_ATTRIBUTE_DIRECTORY) {
-                        st->smb2_type = SMB2_TYPE_DIRECTORY;
-                }
-                if (fs->basic.file_attributes & SMB2_FILE_ATTRIBUTE_REPARSE_POINT) {
-                        st->smb2_type = SMB2_TYPE_LINK;
-                }
+                st->smb2_type       = fs->basic.file_attributes;
                 st->smb2_nlink      = fs->standard.number_of_links;
                 st->smb2_ino        = fs->index_number;
                 st->smb2_size       = fs->standard.end_of_file;
