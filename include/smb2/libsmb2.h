@@ -220,8 +220,12 @@ enum smb2_negotiate_version {
         SMB2_VERSION_0311 = 0x0311
 };
 
-void smb2_set_version(struct smb2_context *smb2,
-                      enum smb2_negotiate_version version);
+void smb2_set_negotiate_version(struct smb2_context* smb2,
+                                enum smb2_negotiate_version version);
+
+enum smb2_negotiate_version smb2_get_negotiate_version(struct smb2_context* smb2);
+
+enum smb2_negotiate_version smb2_get_dialect_version(struct smb2_context* smb2);
 
 /*
  * Set the security mode for the connection.
@@ -229,21 +233,21 @@ void smb2_set_version(struct smb2_context *smb2,
  * and  SMB2_NEGOTIATE_SIGNING_REQUIRED
  * Default is 0.
  */
-void smb2_set_security_mode(struct smb2_context *smb2, uint16_t security_mode);
+void smb2_set_security_mode(struct smb2_context* smb2, uint16_t security_mode);
 
 /*
  * Set whether smb3 encryption should be used or not.
  * 0  : disable encryption. This is the default.
  * !0 : enable encryption.
  */
-void smb2_set_seal(struct smb2_context *smb2, int val);
+void smb2_set_seal(struct smb2_context* smb2, int val);
 
 /*
  * Set whether smb2 signing should be required or not
  * 0  : do not require signing. This is the default.
  * !0 : require signing.
  */
-void smb2_set_sign(struct smb2_context *smb2, int val);
+void smb2_set_sign(struct smb2_context* smb2, int val);
 
 /*
  * Set authentication method.
@@ -251,45 +255,45 @@ void smb2_set_sign(struct smb2_context *smb2, int val);
  * SMB2_SEC_NTLMSSP
  * SMB2_SEC_KRB5
  */
-void smb2_set_authentication(struct smb2_context *smb2, int val);
+void smb2_set_authentication(struct smb2_context* smb2, int val);
 
 /*
  * Set the username that we will try to authenticate as.
  * Default is to try to authenticate as the current user.
  */
-void smb2_set_user(struct smb2_context *smb2, const char *user);
+void smb2_set_user(struct smb2_context* smb2, const char* user);
 /*
  * Set the password that we will try to authenticate as.
  * This function is only needed when libsmb2 is built --without-libkrb5
  */
-void smb2_set_password(struct smb2_context *smb2, const char *password);
+void smb2_set_password(struct smb2_context* smb2, const char* password);
 /*
  * Set the domain when authenticating.
  * This function is only needed when libsmb2 is built --without-libkrb5
  */
-void smb2_set_domain(struct smb2_context *smb2, const char *domain);
+void smb2_set_domain(struct smb2_context* smb2, const char* domain);
 /*
  * Set the workstation when authenticating.
  * This function is only needed when libsmb2 is built --without-libkrb5
  */
-void smb2_set_workstation(struct smb2_context *smb2, const char *workstation);
+void smb2_set_workstation(struct smb2_context* smb2, const char* workstation);
 
 /*
  * Sets the address to some user defined object. May be used to make
  * additional context data available in the async callbacks.
  */
-void smb2_set_opaque(struct smb2_context *smb2, void *opaque);
+void smb2_set_opaque(struct smb2_context* smb2, void* opaque);
 
 /*
  * Returns the opaque pointer set with smb2_set_opaque.
  */
-void *smb2_get_opaque(struct smb2_context *smb2);
+void* smb2_get_opaque(struct smb2_context* smb2);
 
 
 /*
  * Returns the client_guid for this context.
  */
-const char *smb2_get_client_guid(struct smb2_context *smb2);
+const char* smb2_get_client_guid(struct smb2_context* smb2);
 
 /*
  * Asynchronous call to connect a TCP connection to the server
@@ -305,8 +309,8 @@ const char *smb2_get_client_guid(struct smb2_context *smb2);
  *
  *   -errno : Failed to establish the connection. Command_data is NULL.
  */
-int smb2_connect_async(struct smb2_context *smb2, const char *server,
-                       smb2_command_cb cb, void *cb_data);
+int smb2_connect_async(struct smb2_context* smb2, const char* server,
+    smb2_command_cb cb, void* cb_data);
 
 /*
  * Async call to connect to a share.
@@ -323,11 +327,11 @@ int smb2_connect_async(struct smb2_context *smb2, const char *server,
  *
  *   -errno : Failed to connect to the share. Command_data is NULL.
  */
-int smb2_connect_share_async(struct smb2_context *smb2,
-                             const char *server,
-                             const char *share,
-                             const char *user,
-                             smb2_command_cb cb, void *cb_data);
+int smb2_connect_share_async(struct smb2_context* smb2,
+    const char* server,
+    const char* share,
+    const char* user,
+    smb2_command_cb cb, void* cb_data);
 
 /*
  * Sync call to connect to a share.
@@ -337,10 +341,10 @@ int smb2_connect_share_async(struct smb2_context *smb2,
  * 0      : Connected to the share successfully.
  * -errno : Failure.
  */
-int smb2_connect_share(struct smb2_context *smb2,
-                       const char *server,
-                       const char *share,
-                       const char *user);
+int smb2_connect_share(struct smb2_context* smb2,
+    const char* server,
+    const char* share,
+    const char* user);
 
 /*
  * Async call to disconnect from a share/
