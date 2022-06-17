@@ -523,7 +523,6 @@ void smb2_set_user(struct smb2_context *smb2, const char *user)
                 return;
         }
         smb2->user = strdup(user);
-        smb2_set_password_from_file(smb2);
 }
 
 void smb2_set_password(struct smb2_context *smb2, const char *password)
