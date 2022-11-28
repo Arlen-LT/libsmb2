@@ -13,10 +13,14 @@ extern "C" {
 #include <stdint.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <time.h>
 
 #include <libsmb2.h>
 
+#ifdef EBADF
+#undef EBADF
 #define EBADF WSAENOTSOCK
+#endif
 
 typedef SSIZE_T ssize_t;
 
@@ -54,6 +58,25 @@ inline int readv(t_socket sock, struct iovec *iov, int nvecs)
 inline int close(t_socket sock)
 {
   return closesocket(sock);
+}
+
+inline void gettimeofday(struct timeval* tp, void* tzp)
+{
+    time_t clock;
+    struct tm time;
+    SYSTEMTIME wtm;
+    GetLocalTime(&wtm);
+    time.tm_year = wtm.wYear - 1900;
+    time.tm_mon = wtm.wMonth - 1;
+    time.tm_mday = wtm.wDay;
+    time.tm_hour = wtm.wHour;
+    time.tm_min = wtm.wMinute;
+    time.tm_sec = wtm.wSecond;
+    time.tm_isdst = -1;
+    clock = mktime(&time);
+    tp->tv_sec = clock;
+    tp->tv_usec = wtm.wMilliseconds * 1000;
+    return;
 }
 
 #ifdef __cplusplus
