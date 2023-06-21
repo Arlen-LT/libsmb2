@@ -245,7 +245,7 @@ smb2_write_to_socket(struct smb2_context *smb2)
                 tmpiov->iov_base = (char *)tmpiov->iov_base + num_done;
                 tmpiov->iov_len -= num_done;
 
-                while (true)
+                for (;;)
                 {
                     count = writev(smb2->fd, tmpiov, niov);
                     if (count < 0 && errno == EINTR)
@@ -613,14 +613,14 @@ read_more_data:
 static ssize_t smb2_readv_from_socket(struct smb2_context *smb2,
                                       const struct iovec *iov, int iovcnt)
 {
-        while (true)
+        for (;;)
         {
             int ret = readv(smb2->fd, iov, iovcnt);
             if (ret < 0 && errno == EINTR)
             {
                 continue;
             }
-            return err;
+            return ret;
         }
 }
 
@@ -907,7 +907,7 @@ connect_async_ai(struct smb2_context *smb2, const struct addrinfo *ai, int *fd_o
         set_tcp_sockopt(fd, TCP_NODELAY, 1);
 
         int conn_ret = 0;
-        while (true)
+        for (;;)
         {
             conn_ret = connect(fd, (struct sockaddr*)&ss, socksize);
             if (conn_ret < 0 && errno == EINTR)
